@@ -55,6 +55,50 @@ Therefore, the subarray between those indices contains an equal number of **0s**
 
 ---
 
+# Java Code
+
+```java
+import java.util.*;
+
+class Solution {
+
+    public int longestSubarray(int[] arr) {
+
+        HashMap<String, Integer> map = new HashMap<>();
+
+        int zero = 0;
+        int one = 0;
+        int two = 0;
+
+        int max = 0;
+
+        map.put("0,0", -1);
+
+        for (int i = 0; i < arr.length; i++) {
+
+            if (arr[i] == 0)
+                zero++;
+            else if (arr[i] == 1)
+                one++;
+            else
+                two++;
+
+            String diff = (zero - one) + "," + (zero - two);
+
+            if (map.containsKey(diff)) {
+                max = Math.max(max, i - map.get(diff));
+            } else {
+                map.put(diff, i);
+            }
+        }
+
+        return max;
+    }
+}
+```
+
+---
+
 # Algorithm
 
 1. Initialize:
@@ -79,9 +123,9 @@ map.put("0,0", -1);
 
 4. Traverse the array.
 
-* If the element is `0`, increment `zero`.
-* If the element is `1`, increment `one`.
-* Otherwise, increment `two`.
+- If the element is `0`, increment `zero`.
+- If the element is `1`, increment `one`.
+- Otherwise, increment `two`.
 
 5. Compute the difference.
 
@@ -101,6 +145,8 @@ max = Math.max(max, i - map.get(diff));
 map.put(diff, i);
 ```
 
+8. Return `max`.
+
 ---
 
 # Dry Run
@@ -113,9 +159,9 @@ Input
 
 Initially
 
-| Index | zero | one | two | Difference | HashMap    |
-| ----: | ---: | --: | --: | ---------- | ---------- |
-|    -1 |    0 |   0 |   0 | 0,0        | {0,0 → -1} |
+| Index | zero | one | two | Difference | HashMap |
+|------:|-----:|----:|----:|------------|----------|
+| -1 | 0 | 0 | 0 | 0,0 | {0,0 → -1} |
 
 ---
 
@@ -186,7 +232,7 @@ Difference
 0,0
 ```
 
-Already exists in HashMap.
+Already exists.
 
 Length
 
@@ -274,7 +320,7 @@ Output
 
 ---
 
-# How HashMap Works in This Program
+# How HashMap Works
 
 The HashMap stores:
 
@@ -293,20 +339,13 @@ Key      Value
 0,1  -> 1
 ```
 
-When the same difference is found again,
+Whenever the same difference appears again, it means the counts of **0s**, **1s**, and **2s** have increased equally between those indices.
 
-```java
-if(map.containsKey(diff))
-```
-
-the subarray between the previous index and the current index contains an equal number of **0s**, **1s**, and **2s**.
-
-Example:
+Example
 
 ```text
 Index -1 : Difference = 0,0
-
-Index 2  : Difference = 0,0
+Index  2 : Difference = 0,0
 ```
 
 Subarray
@@ -326,9 +365,8 @@ contains
 Similarly,
 
 ```text
-Index -1 : 0,0
-
-Index 5 : 0,0
+Index -1 : Difference = 0,0
+Index  5 : Difference = 0,0
 ```
 
 Subarray
@@ -349,11 +387,9 @@ contains
 
 # Why Store the First Occurrence?
 
-Suppose
+Suppose the difference
 
 ```text
-Difference
-
 0,0
 ```
 
@@ -375,23 +411,25 @@ Then
 Length = 10 - 2 = 8
 ```
 
-If we overwrite the first occurrence, we may lose the longest possible subarray. Therefore, we store only the **first occurrence** of each difference.
+If we overwrite the first occurrence, we lose the longest possible subarray.
+
+Therefore, we store only the **first occurrence** of every difference.
 
 ---
 
 # Time Complexity
 
-* **Time:** `O(N)`
-* **Space:** `O(N)`
+- **Time:** `O(N)`
+- **Space:** `O(N)`
 
 ---
 
 # Key Concepts Used
 
-* HashMap
-* Prefix Counting
-* Prefix Difference Technique
-* String Keys
-* Longest Subarray
-* Arrays
-* One-Pass Traversal
+- HashMap
+- Prefix Counting
+- Prefix Difference Technique
+- String Keys
+- Longest Subarray
+- Arrays
+- One-Pass Traversal
