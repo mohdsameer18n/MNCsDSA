@@ -1,4 +1,4 @@
-# 994. Rotting Oranges
+# Rotting Oranges
 
 ## Approach: Multi-Source BFS
 
