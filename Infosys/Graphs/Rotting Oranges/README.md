@@ -1,4 +1,4 @@
-# Rotting Oranges
+# 994. Rotting Oranges
 
 ## Approach: Multi-Source BFS
 
@@ -14,7 +14,7 @@ class Solution {
         int freshOranges = 0;
         int minute = 0;
 
-        // Step 1: Add all rotten oranges to the queue
+        // Step 1: Store all rotten oranges
         // and count fresh oranges.
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
@@ -27,12 +27,11 @@ class Solution {
             }
         }
 
-        // If there are no fresh oranges
+        // No fresh oranges
         if (freshOranges == 0) {
             return 0;
         }
 
-        // Four possible directions
         int[][] direction = {
             {-1, 0},
             {1, 0},
@@ -40,60 +39,44 @@ class Solution {
             {0, 1}
         };
 
-        // Step 2: Perform Multi-Source BFS
+        // Multi-Source BFS
         while (!q.isEmpty()) {
 
             int size = q.size();
-
-            // Tracks whether any fresh orange
-            // became rotten during this minute.
             boolean rotten = false;
 
-            // Process one BFS level (one minute)
+            // One BFS level = One minute
             for (int i = 0; i < size; i++) {
 
                 int[] curr = q.poll();
-
                 int r = curr[0];
                 int c = curr[1];
 
-                // Visit all 4 neighbours
                 for (int[] dir : direction) {
 
                     int nr = r + dir[0];
                     int nc = c + dir[1];
 
-                    // If neighbour is inside grid
-                    // and is a fresh orange
                     if (nr >= 0 &&
                         nr < grid.length &&
                         nc >= 0 &&
                         nc < grid[0].length &&
                         grid[nr][nc] == 1) {
 
-                        // Rot the fresh orange
                         grid[nr][nc] = 2;
-
-                        // One less fresh orange
                         freshOranges--;
-
-                        // New rotten orange
-                        q.offer(new int[]{nr, nc});
-
                         rotten = true;
+
+                        q.offer(new int[]{nr, nc});
                     }
                 }
             }
 
-            // Increase minute only if
-            // at least one orange rotted.
             if (rotten) {
                 minute++;
             }
         }
 
-        // If fresh oranges remain,
-        // they were unreachable.
         return freshOranges == 0 ? minute : -1;
     }
 }
@@ -101,222 +84,345 @@ class Solution {
 
 ---
 
-# Code Explanation
+# Dry Run
 
-### Queue Initialization
-
-```java
-Queue<int[]> q = new ArrayDeque<>();
-```
-
-Stores the positions of all rotten oranges.
-
-Each element is:
+## Input
 
 ```text
-[row, col]
+grid =
+[
+ [2,1,1],
+ [1,1,0],
+ [0,1,1]
+]
 ```
 
-Example:
+Initial Grid
 
 ```text
-[(0,0), (2,1), (3,4)]
+2 1 1
+1 1 0
+0 1 1
 ```
 
----
+Fresh Oranges = **6**
 
-### Count Fresh Oranges
-
-```java
-int freshOranges = 0;
-```
-
-Counts how many fresh oranges need to become rotten.
-
----
-
-### Store All Rotten Oranges
-
-```java
-if(grid[i][j] == 2){
-    q.offer(new int[]{i, j});
-}
-```
-
-Every rotten orange is inserted into the queue because they all spread simultaneously.
-
----
-
-### Early Return
-
-```java
-if(freshOranges == 0){
-    return 0;
-}
-```
-
-If there are no fresh oranges, no time is needed.
-
----
-
-### Directions Array
-
-```java
-int[][] direction = {
-    {-1,0},
-    {1,0},
-    {0,-1},
-    {0,1}
-};
-```
-
-Represents:
+Initial Queue
 
 ```text
-Up
-Down
-Left
-Right
+[(0,0)]
 ```
 
 ---
 
-### BFS Starts
+## Minute 0 (Initial State)
 
-```java
-while(!q.isEmpty())
+Current Queue
+
+```text
+[(0,0)]
 ```
 
-Runs until no rotten oranges are left to spread the infection.
+Current Grid
+
+```text
+2 1 1
+1 1 0
+0 1 1
+```
+
+Process `(0,0)`:
+
+- Up → Invalid
+- Down → `(1,0)` becomes rotten
+- Left → Invalid
+- Right → `(0,1)` becomes rotten
+
+Updated Grid
+
+```text
+2 2 1
+2 1 0
+0 1 1
+```
+
+Queue for next minute
+
+```text
+[(1,0), (0,1)]
+```
+
+Fresh Oranges
+
+```text
+6 → 4
+```
+
+Minutes
+
+```text
+1
+```
 
 ---
 
-### Process One Minute
+## Minute 1
+
+Current Queue
+
+```text
+[(1,0), (0,1)]
+```
+
+Current Grid
+
+```text
+2 2 1
+2 1 0
+0 1 1
+```
+
+Process `(1,0)`
+
+- `(1,1)` becomes rotten
+
+Process `(0,1)`
+
+- `(0,2)` becomes rotten
+
+Updated Grid
+
+```text
+2 2 2
+2 2 0
+0 1 1
+```
+
+Queue
+
+```text
+[(1,1), (0,2)]
+```
+
+Fresh Oranges
+
+```text
+4 → 2
+```
+
+Minutes
+
+```text
+2
+```
+
+---
+
+## Minute 2
+
+Current Queue
+
+```text
+[(1,1), (0,2)]
+```
+
+Current Grid
+
+```text
+2 2 2
+2 2 0
+0 1 1
+```
+
+Process `(1,1)`
+
+- `(2,1)` becomes rotten
+
+Process `(0,2)`
+
+- No new oranges
+
+Updated Grid
+
+```text
+2 2 2
+2 2 0
+0 2 1
+```
+
+Queue
+
+```text
+[(2,1)]
+```
+
+Fresh Oranges
+
+```text
+2 → 1
+```
+
+Minutes
+
+```text
+3
+```
+
+---
+
+## Minute 3
+
+Current Queue
+
+```text
+[(2,1)]
+```
+
+Current Grid
+
+```text
+2 2 2
+2 2 0
+0 2 1
+```
+
+Process `(2,1)`
+
+- `(2,2)` becomes rotten
+
+Updated Grid
+
+```text
+2 2 2
+2 2 0
+0 2 2
+```
+
+Queue
+
+```text
+[(2,2)]
+```
+
+Fresh Oranges
+
+```text
+1 → 0
+```
+
+Minutes
+
+```text
+4
+```
+
+---
+
+## Minute 4
+
+Current Queue
+
+```text
+[(2,2)]
+```
+
+No fresh neighbours.
+
+Queue becomes empty.
+
+Since
+
+```text
+freshOranges == 0
+```
+
+Return
+
+```text
+4
+```
+
+---
+
+# Visualization
+
+### Initial
+
+```text
+2 1 1
+1 1 0
+0 1 1
+```
+
+↓
+
+### After 1 minute
+
+```text
+2 2 1
+2 1 0
+0 1 1
+```
+
+↓
+
+### After 2 minutes
+
+```text
+2 2 2
+2 2 0
+0 1 1
+```
+
+↓
+
+### After 3 minutes
+
+```text
+2 2 2
+2 2 0
+0 2 1
+```
+
+↓
+
+### After 4 minutes
+
+```text
+2 2 2
+2 2 0
+0 2 2
+```
+
+---
+
+# Why `size = q.size()`?
+
+Suppose the queue contains:
+
+```text
+[(1,0), (0,1)]
+```
+
+These oranges were already rotten **before this minute started**.
+
+Only these oranges should spread the rot during the current minute.
+
+Any newly rotten oranges are added to the queue:
+
+```text
+[(1,1), (0,2)]
+```
+
+but they **must wait until the next minute** to spread the infection.
+
+Therefore:
 
 ```java
 int size = q.size();
 ```
 
-The current queue contains oranges that are rotten **at the beginning of this minute**.
-
-We process only these oranges.
-
----
-
-### Check if Anything Rotted
-
-```java
-boolean rotten = false;
-```
-
-Used to determine whether to increase the minute count.
-
-If no fresh orange becomes rotten during this level, we don't increment the time.
-
----
-
-### Remove Current Rotten Orange
-
-```java
-int[] curr = q.poll();
-```
-
-Take one rotten orange from the queue.
-
----
-
-### Visit Four Neighbours
-
-```java
-for(int[] dir : direction)
-```
-
-Generate neighbour coordinates:
-
-```java
-int nr = r + dir[0];
-int nc = c + dir[1];
-```
-
----
-
-### Check Valid Fresh Orange
-
-```java
-if(nr >= 0 &&
-   nr < grid.length &&
-   nc >= 0 &&
-   nc < grid[0].length &&
-   grid[nr][nc] == 1)
-```
-
-Ensures:
-
-- Inside the grid
-- Fresh orange
-
----
-
-### Rot the Orange
-
-```java
-grid[nr][nc] = 2;
-```
-
-Mark it as rotten to avoid processing it again.
-
----
-
-### Update Fresh Count
-
-```java
-freshOranges--;
-```
-
-One fresh orange has now become rotten.
-
----
-
-### Add to Queue
-
-```java
-q.offer(new int[]{nr, nc});
-```
-
-This orange will spread the rot during the **next minute**.
-
----
-
-### Mark That Something Rotted
-
-```java
-rotten = true;
-```
-
-Used later to increase the minute count.
-
----
-
-### Increase Minute
-
-```java
-if(rotten){
-    minute++;
-}
-```
-
-Increase time only if at least one fresh orange became rotten during this BFS level.
-
----
-
-### Final Answer
-
-```java
-return freshOranges == 0 ? minute : -1;
-```
-
-- Return `minute` if every fresh orange became rotten.
-- Return `-1` if some fresh oranges could never be reached.
+freezes the current level, ensuring that **one BFS level = one minute**.
 
 ---
 
@@ -324,10 +430,10 @@ return freshOranges == 0 ? minute : -1;
 
 ### Time Complexity
 
-- Scan grid: **O(m × n)**
+- Scan the grid: **O(m × n)**
 - BFS traversal: **O(m × n)**
 
-**Overall:**
+Overall:
 
 ```text
 O(m × n)
@@ -346,8 +452,9 @@ O(m × n)
 # Key Takeaways
 
 - This is a **Multi-Source BFS** problem.
-- All rotten oranges are added to the queue initially.
-- One BFS level represents **one minute**.
-- Every fresh orange is processed only once.
-- If any fresh orange remains after BFS, return **-1**.
-- If there are no fresh oranges initially, return **0**.
+- Every initially rotten orange is added to the queue.
+- **Each BFS level represents one minute**.
+- `size = q.size()` ensures newly rotten oranges spread only in the **next minute**.
+- Each fresh orange is visited exactly once.
+- Return **-1** if any fresh orange remains after BFS.
+- Return **0** if there are no fresh oranges initially.
