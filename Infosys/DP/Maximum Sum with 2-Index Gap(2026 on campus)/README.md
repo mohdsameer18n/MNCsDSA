@@ -42,10 +42,10 @@ Maximum sum = **15**
 
 At every index, we have two choices:
 
-1. Include the current element and jump to `i + 3`.
-2. Exclude the current element and move to `i + 1`.
+1. **Include** the current element and jump to `i + 3`.
+2. **Exclude** the current element and move to `i + 1`.
 
-Store the result of each index in a DP array so it is computed only once.
+Store the answer of every index in a DP array so it is calculated only once.
 
 ---
 
@@ -55,7 +55,7 @@ Store the result of each index in a DP array so it is computed only once.
 solve(i)
 ```
 
-Represents the maximum sum obtainable starting from index `i`.
+Represents the maximum sum starting from index `i`.
 
 ---
 
@@ -73,7 +73,7 @@ solve(i) = max(
 ## Base Case
 
 ```text
-if (i >= n)
+if(i >= n)
     return 0;
 ```
 
@@ -94,6 +94,50 @@ if (i >= n)
 
 ---
 
+## Memoization Code (Java)
+
+```java
+import java.util.*;
+
+public class Main {
+
+    public static int solve(int i, int[] arr, int[] dp) {
+
+        if (i >= arr.length)
+            return 0;
+
+        if (dp[i] != -1)
+            return dp[i];
+
+        int include = arr[i] + solve(i + 3, arr, dp);
+        int exclude = solve(i + 1, arr, dp);
+
+        dp[i] = Math.max(include, exclude);
+
+        return dp[i];
+    }
+
+    public static void main(String[] args) {
+
+        Scanner scan = new Scanner(System.in);
+
+        int n = scan.nextInt();
+
+        int[] arr = new int[n];
+
+        for (int i = 0; i < n; i++)
+            arr[i] = scan.nextInt();
+
+        int[] dp = new int[n];
+        Arrays.fill(dp, -1);
+
+        System.out.println(solve(0, arr, dp));
+    }
+}
+```
+
+---
+
 ## Dry Run
 
 Array
@@ -103,7 +147,7 @@ Index : 0 1 2 3 4 5
 Value : 4 2 7 5 1 8
 ```
 
-Recursive computation:
+Recursive computation
 
 ```text
 solve(0)
@@ -113,13 +157,13 @@ solve(0)
 └── Exclude = solve(1)
 ```
 
-Computed DP values:
+Computed DP values
 
 | Index | 0 | 1 | 2 | 3 | 4 | 5 |
 |------:|--:|--:|--:|--:|--:|--:|
-| dp    |15 |15 |15 |8 |8 |8 |
+| dp |15|15|15|8|8|8|
 
-Answer:
+Answer
 
 ```text
 15
@@ -145,9 +189,9 @@ O(n)
 
 ## Idea
 
-Instead of recursion, build the answer from the end of the array.
+Instead of recursion, build the answer from the last index.
 
-Define:
+Define
 
 ```text
 dp[i]
@@ -180,7 +224,7 @@ dp[n+1] = 0
 dp[n+2] = 0
 ```
 
-Hence, create
+Therefore,
 
 ```text
 dp = new int[n+3];
@@ -191,10 +235,10 @@ dp = new int[n+3];
 ## Filling Order
 
 ```text
-for (i = n-1; i >= 0; i--)
+for(i = n-1; i >= 0; i--)
 ```
 
-Fill from **right to left**.
+Fill the DP array from **right to left**.
 
 ---
 
@@ -202,16 +246,51 @@ Fill from **right to left**.
 
 ```text
 dp[5]
-  ↑
+ ↑
 dp[4]
-  ↑
+ ↑
 dp[3]
-  ↑
+ ↑
 dp[2]
-  ↑
+ ↑
 dp[1]
-  ↑
+ ↑
 dp[0]
+```
+
+---
+
+## Tabulation Code (Java)
+
+```java
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner scan = new Scanner(System.in);
+
+        int n = scan.nextInt();
+
+        int[] arr = new int[n];
+
+        for (int i = 0; i < n; i++)
+            arr[i] = scan.nextInt();
+
+        int[] dp = new int[n + 3];
+
+        for (int i = n - 1; i >= 0; i--) {
+
+            int include = arr[i] + dp[i + 3];
+            int exclude = dp[i + 1];
+
+            dp[i] = Math.max(include, exclude);
+        }
+
+        System.out.println(dp[0]);
+    }
+}
 ```
 
 ---
@@ -344,21 +423,36 @@ O(n)
 |-------------------------|------------------------|
 | Uses recursion | Uses loops |
 | Starts from `solve(0)` | Starts from the last index |
-| Stores computed states | Builds all states iteratively |
+| Solves only required states | Computes all states |
 | DP initialized with `-1` | DP initialized with `0` |
 | Uses recursion stack | No recursion stack |
 
 ---
 
-## Summary
+# Summary
 
-- **State:** `dp[i]` = maximum sum starting from index `i`
-- **Include:** `arr[i] + dp[i+3]`
-- **Exclude:** `dp[i+1]`
-- **Transition:**
+### DP State
+
+```text
+dp[i] = Maximum sum starting from index i
+```
+
+### Include
+
+```text
+arr[i] + dp[i+3]
+```
+
+### Exclude
+
+```text
+dp[i+1]
+```
+
+### Transition
 
 ```text
 dp[i] = max(arr[i] + dp[i+3], dp[i+1])
 ```
 
-This problem is a variation of the **House Robber** pattern where the gap between selected indices is **3** instead of **2**.
+This is a variation of the **House Robber** problem where, after choosing an element, you must skip the next **2 indices** (jump to `i + 3`).
