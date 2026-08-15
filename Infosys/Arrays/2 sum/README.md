@@ -5,7 +5,7 @@
 
 ## Problem Statement
 
-Given an integer array `nums` and an integer `target`, return the **indices** of the two numbers such that they add up to the target.
+Given an integer array `nums` and an integer `target`, return the **indice** of the two numbers such that they add up to the target.
 
 You may assume:
 
