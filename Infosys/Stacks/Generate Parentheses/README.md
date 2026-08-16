@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-Given `n` pairs of parentheses, write a function to generate **all combinations of well-formed (valid)** parentheses.
+Given `n` pairs of parentheses, write a function to generates **all combinations of well-formed (valid)** parentheses.
 
 ### Example
 
