@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-Given a positive integer `n`, generate an `n × n` matrix filled with numbers from **1** to **n²** in **spiral order**.
+Given a positive integer `n`, generate an `n × n` matrix filled with numbers from **1*** to **n²** in **spiral order**.
 
 ---
 
