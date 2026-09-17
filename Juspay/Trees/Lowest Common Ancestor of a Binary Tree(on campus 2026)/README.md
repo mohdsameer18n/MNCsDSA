@@ -244,6 +244,108 @@ class Solution {
 
 ---
 
+---
+import java.util.*;
+
+public class Main {
+
+    // Tree Node
+    static class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode(int val) {
+            this.val = val;
+        }
+    }
+
+    // Insert a value into BST
+    static TreeNode insert(TreeNode root, int val) {
+
+        if (root == null) {
+            return new TreeNode(val);
+        }
+
+        if (val < root.val) {
+            root.left = insert(root.left, val);
+        } else {
+            root.right = insert(root.right, val);
+        }
+
+        return root;
+    }
+
+    // Lowest Common Ancestor in BST
+    static TreeNode lowestCommonAncestor(
+            TreeNode root,
+            TreeNode p,
+            TreeNode q) {
+
+        while (root != null) {
+
+            // Both p and q are smaller
+            if (p.val < root.val && q.val < root.val) {
+                root = root.left;
+            }
+
+            // Both p and q are greater
+            else if (p.val > root.val && q.val > root.val) {
+                root = root.right;
+            }
+
+            // They are on different sides
+            // OR root itself is p/q
+            else {
+                return root;
+            }
+        }
+
+        return null;
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        /*
+              Example BST:
+
+                    6
+                  /   \
+                 2     8
+                / \   / \
+               0   4 7   9
+                  / \
+                 3   5
+        */
+
+        int[] values = {6, 2, 8, 0, 4, 7, 9, 3, 5};
+
+        TreeNode root = null;
+
+        // Build BST
+        for (int value : values) {
+            root = insert(root, value);
+        }
+
+        // Nodes whose LCA we want
+        TreeNode p = new TreeNode(2);
+        TreeNode q = new TreeNode(8);
+
+        TreeNode result = lowestCommonAncestor(root, p, q);
+
+        if (result != null) {
+            System.out.println("LCA = " + result.val);
+        } else {
+            System.out.println("LCA not found");
+        }
+
+        sc.close();
+    }
+}
+---
+
 # BFS vs DFS Topological Sort
 
 | Feature | Kahn's Algorithm (BFS) | DFS |
